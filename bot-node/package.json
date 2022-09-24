@@ -1,0 +1,38 @@
+{
+  "name": "twitch-bot-template",
+  "version": "1.0.0",
+  "description": "Modelo básico para um bot da Twitch",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Davi-Coelho/twitch-bot-template.git"
+  },
+  "keywords": [
+    "Bot",
+    "Twitch"
+  ],
+  "author": "Davi Coelho",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Davi-Coelho/twitch-bot-template/issues"
+  },
+  "homepage": "https://github.com/Davi-Coelho/twitch-bot-template#readme",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "bcrypt": "^5.0.1",
+    "consign": "^0.1.6",
+    "cookie-parser": "^1.4.6",
+    "ejs": "^3.1.8",
+    "express": "^4.18.1",
+    "express-session": "^1.17.3",
+    "helmet": "^6.0.0",
+    "mongoose": "^6.6.1",
+    "passport": "^0.6.0",
+    "passport-local": "^1.0.0",
+    "passport-oauth": "^1.0.0",
+    "tmi.js": "^1.8.5"
+  }
+}
