@@ -12,6 +12,14 @@ pipeline {
             }
         }
 
+        stage("Copiando arquivo .env") {
+            steps {
+                withCredentials([file(credentialsId: "bot-env-file", variable: "envFile")]) {
+                    sh "cp $envFile $WORKSPACE"
+                }
+            }
+        }
+
         stage("Subindo Containers") {
             steps {
                 sh "docker compose up"
