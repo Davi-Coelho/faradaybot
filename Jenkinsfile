@@ -29,7 +29,7 @@ pipeline {
 
         stage("Stopping containers") {
             steps {
-                sh "docker compose rm -f -v -s"
+                sh "docker compose rm -f -s"
                 sh "docker compose down"
             }
         }
