@@ -1,0 +1,46 @@
+* {
+    font-family: 'Courier New', Courier, monospace;
+    margin: 0;
+}
+
+body{
+    display: flex;
+    height: 100vh;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #202020;
+    gap: 10px;
+}
+
+.login-button {
+    color: white;
+    font-weight: bold;
+    font-size: 1.2em;
+    display: flex;
+    height: 50px;
+    width: 400px;
+    border-radius: 10px;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(155, 86, 255);
+    border-style: hidden;
+    cursor: pointer;
+}
+
+.login-button:hover {
+    background-color: rgb(163, 100, 255);    
+}
+
+span {
+    padding-left: 10px;
+}
+
+a {
+    text-decoration: none;
+}
+
+.bot-name {
+    font-size: 4em;
+    color: #fff;
+}
