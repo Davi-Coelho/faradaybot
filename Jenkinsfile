@@ -12,7 +12,7 @@ pipeline {
             }
         }
 
-        stages("Subindo Containers") {
+        stage("Subindo Containers") {
             steps {
                 sh "docker compose up"
             }
