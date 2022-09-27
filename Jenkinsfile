@@ -27,6 +27,13 @@ pipeline {
             }
         }
 
+        stage("Stopping containers") {
+            steps {
+                sh "docker compose rm -f -v -s"
+                sh "docker compose down"
+            }
+        }
+
         stage("Running containers") {
             steps {
                 sh "docker compose up -d"
