@@ -1,13 +1,16 @@
 const mongoose = require('mongoose')
-const DB = process.env.DB
-const DB_USER = process.env.DB_USER
-const DB_PWD = process.env.DB_PWD
-const ADMIN_USER = process.env.ADMIN_USER
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD
 
-mongoose.connect(`mongodb://${DB_USER}:${DB_PWD}@mongo:27017/${DB}?authSource=${DB}`)
+const {
+    DB,
+    DB_USER,
+    DB_PASS,
+    ADMIN_USER,
+    ADMIN_PASSWORD
+} = process.env
+
+mongoose.connect(`mongodb://${DB_USER}:${DB_PASS}@mongo:27017/${DB}?authSource=admin`)
     .then(() => console.log('Conectado ao banco de dados!'))
-    .catch(() => console.log('Erro ao se conectar com o banco de dados!'))
+    .catch((err) => console.log(`Erro ao se conectar com o banco de dados! ${err}`))
 
 const UserSchema = mongoose.Schema({
     _id: {
@@ -109,6 +112,8 @@ AdminModel.findOne({ username: ADMIN_USER }).then(result => {
             password: ADMIN_PASSWORD
         }).then(() => {
             console.log('Conta de Administrador criada!')
+        }).catch((err) => {
+            console.log(`Erro ao criar usuário administrador: ${err}`)
         })
     }
     else {
