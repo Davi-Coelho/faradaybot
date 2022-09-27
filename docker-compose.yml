@@ -1,8 +1,8 @@
 version: '3.9'
 services:
   mongo:
-    image: mongo:5.0
-    container_name: db
+    image: mongo:4.1.8-xenial
+    container_name: mongo
     restart: unless-stopped
     env_file:
       - .env
@@ -11,9 +11,9 @@ services:
     volumes:
       - db:/data/db
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=${DB_USER}
-      - MONGO_INITDB_ROOT_PASSWORD=${DB_PASS}
-      - MONGO_INITDB_DATABASE=${DB}
+      - MONGO_INITDB_ROOT_USERNAME=$DB_USER
+      - MONGO_INITDB_ROOT_PASSWORD=$DB_PASS
+      - MONGO_INITDB_DATABASE=$DB
     networks:
       - app-network
   bot:
@@ -25,12 +25,17 @@ services:
     env_file:
       - .env
     ports:
-      - 80:${BOT_PORT}
+      - 80:$BOT_PORT
+    volumes:
+      - ./bot:/home/node/app
+      - node_modules:/home/node/app/node_modules
     networks:
       - app-network
+    command: /home/node/app/node_modules/.bin/nodemon app.js
 
 volumes:
   db:
+  node_modules:
 
 networks:
   app-network:
