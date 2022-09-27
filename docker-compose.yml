@@ -1,0 +1,37 @@
+version: '3.9'
+services:
+  mongo:
+    image: mongo:5.0
+    container_name: db
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - 27017:27017
+    volumes:
+      - db:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${DB_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${DB_PASS}
+      - MONGO_INITDB_DATABASE=${DB}
+    networks:
+      - app-network
+  bot:
+    depends_on:
+      - mongo
+    container_name: bot
+    restart: unless-stopped
+    build: bot
+    env_file:
+      - .env
+    ports:
+      - 80:${BOT_PORT}
+    networks:
+      - app-network
+
+volumes:
+  db:
+
+networks:
+  app-network:
+    driver: bridge

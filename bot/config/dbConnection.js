@@ -5,7 +5,7 @@ const DB_PWD = process.env.DB_PWD
 const ADMIN_USER = process.env.ADMIN_USER
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD
 
-mongoose.connect(`mongodb://${DB_USER}:${DB_PWD}@localhost:27017/${DB}?authSource=${DB}`)
+mongoose.connect(`mongodb://${DB_USER}:${DB_PWD}@mongo:27017/${DB}?authSource=${DB}`)
     .then(() => console.log('Conectado ao banco de dados!'))
     .catch(() => console.log('Erro ao se conectar com o banco de dados!'))
 
