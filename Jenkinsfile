@@ -4,7 +4,14 @@ pipeline {
     }
 
     stages {
-        stage("Clonando Repositório") {
+        stage("Cleaning workspace") {
+            steps {
+                cleanWs()
+                checkout scm
+                echo "Building ${JOB_NAME}..."
+            }
+        }
+        stage("Cloning git") {
             steps {
                 git branch: "main",
                 url: "https://github.com/Davi-Coelho/twitch-bot-template.git",
@@ -12,7 +19,7 @@ pipeline {
             }
         }
 
-        stage("Copiando arquivo .env") {
+        stage("Copying .env file") {
             steps {
                 withCredentials([file(credentialsId: "bot-env-file", variable: "envFile")]) {
                     sh "cp $envFile $WORKSPACE"
@@ -20,7 +27,7 @@ pipeline {
             }
         }
 
-        stage("Subindo Containers") {
+        stage("Running containers") {
             steps {
                 sh "docker compose up -d"
             }
