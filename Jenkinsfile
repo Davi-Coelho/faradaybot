@@ -40,7 +40,10 @@ pipeline {
 
         stage("Cleaning old images") {
             steps {
-                sh 'docker rmi $DOCKER_USER/$BOT_NAME:latest', returnStatus: true
+                catchError {
+                    sh 'docker rmi $DOCKER_USER/$BOT_NAME:latest'
+                }
+                echo currentBuild.result
             }
         }
 
