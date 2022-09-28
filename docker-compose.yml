@@ -6,8 +6,6 @@ services:
     restart: unless-stopped
     env_file:
       - .env
-    ports:
-      - 27017:27017
     volumes:
       - db:/data/db
     environment:
@@ -21,6 +19,7 @@ services:
       - mongo
     container_name: bot
     restart: unless-stopped
+    image: $DOCKER_USER/$BOT_NAME
     build: bot
     env_file:
       - .env

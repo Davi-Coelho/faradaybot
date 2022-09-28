@@ -3,12 +3,17 @@ pipeline {
         label 'ridley'
     }
 
+    environment {
+        DOCKER_USER = 'username'
+        BOT_NAME = 'twitch-bot'
+    }
+
     stages {
         stage("Cleaning workspace") {
             steps {
                 cleanWs()
                 checkout scm
-                echo "Building ${JOB_NAME}..."
+                echo 'Building $JOB_NAME...'
             }
         }
         stage("Cloning git") {
@@ -29,14 +34,19 @@ pipeline {
 
         stage("Stopping containers") {
             steps {
-                sh "docker compose rm -f -s"
                 sh "docker compose down"
+            }
+        }
+
+        stage("Cleaning old images") {
+            steps {
+                sh 'docker rmi $DOCKER_USER/$BOT_NAME:latest'
             }
         }
 
         stage("Running containers") {
             steps {
-                sh "docker compose up -d"
+                sh "docker compose up -d --build"
             }
         }
     }
