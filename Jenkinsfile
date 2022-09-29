@@ -43,7 +43,7 @@ pipeline {
                 script {
                     try {
                         sh 'docker rmi $DOCKER_USER/$BOT_NAME:latest'
-                    } catch(Expection e) {
+                    } catch(Exception e) {
                         print("Error: " + e)
                     }
                 }
