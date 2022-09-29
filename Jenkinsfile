@@ -40,13 +40,16 @@ pipeline {
 
         stage("Cleaning old images") {
             steps {
-                catchError {
-                    sh 'docker rmi $DOCKER_USER/$BOT_NAME:latest'
+                script {
+                    try {
+                        sh 'docker rmi $DOCKER_USER/$BOT_NAME:latest'
+                    } catch(Expection e) {
+                        print("Error: " + e)
+                    }
                 }
                 echo currentBuild.result
             }
         }
-
         stage("Running containers") {
             steps {
                 sh "docker compose up -d --build"
