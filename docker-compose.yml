@@ -23,14 +23,19 @@ services:
     build: bot
     env_file:
       - .env
-    ports:
-      - 80:$BOT_PORT
     volumes:
       - ./bot:/home/node/app
       - node_modules:/home/node/app/node_modules
     networks:
       - app-network
     command: /home/node/app/node_modules/.bin/nodemon app.js
+  nginx:
+    build: nginx
+    container_name: nginx
+    ports:
+      - 80:80
+    networks:
+      - app-network
 
 volumes:
   db:
