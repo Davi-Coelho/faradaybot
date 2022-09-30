@@ -1,10 +1,12 @@
 module.exports.index = (application, req, res) => {
+    let botName = process.env.BOT_NAME
+    botName = botName.charAt(0).toUpperCase() + botName.slice(1)
     
     if (req.isAuthenticated() && req.session.passport.user.userType === 'normal-user') {
         res.redirect('/dashboard')
     }
     else {
-        res.render('index')
+        res.render('index', { botName })
     }
 }
 

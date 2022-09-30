@@ -5,6 +5,7 @@ const consign = require('consign')
 const helmet = require('helmet')
 const cookieParser = require('cookie-parser')
 const { client, db } = require('./chatbot')
+const i18n = require('./i18n.config')
 
 const SESSION_SECRET = process.env.SESSION_SECRET
 
@@ -36,6 +37,7 @@ app.use(session({
 }))
 app.use(passport.initialize())
 app.use(passport.session())
+app.use(i18n.init)
 app.passport = passport
 app.db = db
 app.bot = client

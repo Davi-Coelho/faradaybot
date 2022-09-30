@@ -2,18 +2,18 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>Faraday Bot</title>
+        <title><%=botName %></title>
         <link rel="stylesheet" href="css/index.css">
         <link rel="stylesheet" href="css/all.min.css">
         <link rel="shortcut icon" href="images/favicon.ico" />
     </head>
     <body>
-        <img src="images/logo.png" alt="Faraday Bot">
-        <span class="bot-name">Faraday Bot</span>
+        <img src="images/logo.png" alt="<%=botName %>">
+        <span class="bot-name"><%=botName %></span>
         <a href="/auth/twitch">
             <button class="login-button">
                 <i class="fab fa-twitch"></i>
-                <span>Entrar com a Twitch</span>
+                <span><%=__('user-login-message')%></span>
             </button>
         </a>
     </body>
