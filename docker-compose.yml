@@ -32,6 +32,8 @@ services:
   nginx:
     build: nginx
     container_name: nginx
+    image: $DOCKER_USER/loadbalancer
+    restart: unless-stopped
     ports:
       - 80:80
     networks:
