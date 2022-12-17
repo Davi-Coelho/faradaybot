@@ -1,11 +1,13 @@
 module.exports.dashboard = (application, req, res) => {
+    let botName = process.env.BOT_NAME
+    botName = botName.charAt(0).toUpperCase() + botName.slice(1)
 
     if (req.isAuthenticated() && req.session.passport.user.userType === 'normal-user') {
         const user = req.session.passport.user.data[0]
         const UsuarioDAO = new application.app.models.UsuarioDAO(application.db.UserModel)
 
         UsuarioDAO.getUser(user, result => {
-            res.render('dashboard', { usuario: user, chatJoined: result.chatJoined })
+            res.render('dashboard', { usuario: user, chatJoined: result.chatJoined, botName: botName })
         })
     }
     else {
@@ -15,7 +17,7 @@ module.exports.dashboard = (application, req, res) => {
 
 module.exports.logout = (application, req, res) => {
     if (req.isAuthenticated() && req.session.passport.user.userType === 'normal-user') {
-        req.session.destroy(err => {
+        req.session.destroy(_ => {
             res.redirect('/')
         })
     }
