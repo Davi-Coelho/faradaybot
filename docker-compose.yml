@@ -19,7 +19,7 @@ services:
       - mongo
     container_name: bot
     restart: unless-stopped
-    image: $DOCKER_USER/$BOT_NAME
+    image: "${DOCKER_USER}/${BOT_NAME}"
     build: bot
     env_file:
       - .env
@@ -32,7 +32,7 @@ services:
   nginx:
     build: nginx
     container_name: nginx
-    image: $DOCKER_USER/loadbalancer
+    image: "${DOCKER_USER}/loadbalancer"
     restart: unless-stopped
     ports:
       - "80:80"
