@@ -35,7 +35,7 @@ services:
     image: $DOCKER_USER/loadbalancer
     restart: unless-stopped
     ports:
-      - 80:80
+      - "80:80"
     networks:
       - app-network
 
