@@ -13,23 +13,21 @@ const CALLBACK_URL = process.env.CALLBACK_URL
 
 module.exports = (passport) => {
 
-    OAuth2Strategy.prototype.userProfile = function (accessToken, done) {
+    OAuth2Strategy.prototype.userProfile = async function (accessToken, done) {
 
-        axios.get('https://api.twitch.tv/helix/users', {
+        const response = await axios.get('https://api.twitch.tv/helix/users', {
             headers: {
                 'Client-ID': TWITCH_CLIENT_ID,
                 'Accept': 'application/vnd.twitchtv.v5+json',
                 'Authorization': 'Bearer ' + accessToken
             }
-        }).then((response) => {
-
-            if (response && response.status === 200) {
-                done(null, response.data)
-            }
-            else {
-                done(response.data)
-            }
         })
+
+        if (response && response.status === 200) {
+            done(null, response.data)
+        } else {
+            done(response.data)
+        }
     }
 
     passport.serializeUser(function (user, done) {
