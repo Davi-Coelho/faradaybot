@@ -8,10 +8,6 @@ const {
     ADMIN_PASSWORD
 } = process.env
 
-mongoose.connect(`mongodb://${DB_USER}:${DB_PASS}@mongo:27017/${DB}?authSource=admin`)
-    .then(() => console.log('Conectado ao banco de dados!'))
-    .catch((err) => console.log(`Erro ao se conectar com o banco de dados! ${err}`))
-
 const UserSchema = mongoose.Schema({
     _id: {
         type: Number,
@@ -105,20 +101,27 @@ const ChatbotModel = mongoose.model('chatbots', ChatbotSchema)
 const FollowerModel = mongoose.model('followers', FollowerSchema)
 const AdminModel = mongoose.model('admins', AdminSchema)
 
-AdminModel.findOne({ username: ADMIN_USER }).then(result => {
-    if (result === null) {
-        AdminModel.create({
+async function initDatabase() {
+    try {
+        await mongoose.connect(`mongodb://${DB_USER}:${DB_PASS}@mongo:27017/${DB}?authSource=admin`)
+        console.log('Conectado ao banco de dados!')
+    } catch (err) {
+        console.log(`mongoConnectError: ${err}`)
+    }
+
+    const adminUser = await AdminModel.findOne({ username: ADMIN_USER })
+    if (adminUser === null) {
+        const adminCreated = await AdminModel.create({
             username: ADMIN_USER,
             password: ADMIN_PASSWORD
-        }).then(() => {
-            console.log('Conta de Administrador criada!')
-        }).catch((err) => {
-            console.log(`Erro ao criar usuário administrador: ${err}`)
         })
+        console.log(`adminCreated: ${adminCreated}`)
     }
     else {
         console.log('Conta de Administrador já existe!')
     }
-})
+}
+
+initDatabase()
 
 module.exports = { UserModel, SubscriptionModel, ChatbotModel, FollowerModel, AdminModel }
