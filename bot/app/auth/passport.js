@@ -48,7 +48,7 @@ module.exports = (passport) => {
         callbackURL: CALLBACK_URL,
         state: true
     },
-        function (accessToken, refreshToken, profile, done) {
+        async function (accessToken, refreshToken, profile, done) {
             profile.accessToken = accessToken;
             profile.refreshToken = refreshToken;
             profile.userType = 'normal-user'
@@ -64,7 +64,7 @@ module.exports = (passport) => {
 
             const UsuarioDAO = new UserDAO(UserModel)
 
-            UsuarioDAO.createOrUpdateUser(userParams)
+            await UsuarioDAO.createOrUpdateUser(userParams)
 
             return done(null, profile);
         }

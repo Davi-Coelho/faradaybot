@@ -5,53 +5,49 @@ class UsuarioDAO {
         this._UserModel = UserModel
     }
 
-    createOrUpdateUser = (user) => {
-        this._UserModel.findOne({ _id: user._id })
-            .then(result => {
-                if (result === null) {
-                    this._UserModel.create(user)
-                }
-                else {
-                    const params = new URLSearchParams()
-                    params.append('client_id', process.env.TWITCH_CLIENT_ID)
-                    params.append('token', result.refreshToken)
-                    axios.post('https://id.twitch.tv/oauth2/revoke', params, {
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        }
-                    }).then(response => {
-                        this._UserModel.updateOne(
-                            {
-                                _id: user._id
-                            },
-                            {
-                                $set: {
-                                    displayName: user.displayName,
-                                    imageUrl: user.imageUrl,
-                                    accessToken: user.accessToken,
-                                    refreshToken: user.refreshToken
-                                }
-                            }
-                        ).then(result => console.log('resultUpdateOne: ', result))
-                    }).catch(err => console.log('errAxiosPost: ', err))
+    createOrUpdateUser = async (user) => {
+        const userData = await this._UserModel.findOne({ _id: user._id })
+        if (userData === null) {
+            const userCreated = await this._UserModel.create(user)
+            console.log(`userCreated: ${userCreated}`)
+        } else {
+            const params = new URLSearchParams()
+            params.append('client_id', process.env.TWITCH_CLIENT_ID)
+            params.append('token', userData.refreshToken)
+            const postResponse = await axios.post('https://id.twitch.tv/oauth2/revoke', params, {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
                 }
             })
-            .catch(err => console.log('errFindOne: ', err))
+            console.log(`postResponse: ${postResponse}`)
+
+            const userUpdated = await this._UserModel.updateOne(
+                {
+                    _id: user._id
+                },
+                {
+                    $set: {
+                        displayName: user.displayName,
+                        imageUrl: user.imageUrl,
+                        accessToken: user.accessToken,
+                        refreshToken: user.refreshToken
+                    }
+                }
+            )
+            console.log(`userUpdated: ${userUpdated}`)
+        }
     }
 
-    getUser = (user, callback) => {
-        this._UserModel.findOne({ _id: user.id })
-            .then(result => {
-                callback(result)
-            })
+    getUser = async (user) => {
+        return await this._UserModel.findOne({ _id: user.id })
     }
 
     getAllUsers = async () => {
         return await this._UserModel.find()
     }
 
-    updateUserChat = (user, chatJoined) => {
-        this._UserModel.updateOne(
+    updateUserChat = async (user, chatJoined) => {
+        const userChatUpdated = await this._UserModel.updateOne(
             {
                 _id: user.id
             },
@@ -60,7 +56,8 @@ class UsuarioDAO {
                     chatJoined: chatJoined
                 }
             }
-        ).then(result => console.log('resultUpdateChat: ', result))
+        )
+        console.log(`userChatUpdated: ${userChatUpdated}`)
     }
 }
 

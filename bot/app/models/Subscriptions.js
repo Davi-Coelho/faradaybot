@@ -11,7 +11,7 @@ class Subscriptions {
     }
 
     createSubscription = (subscriptions, user) => {
-        subscriptions.forEach((type, i) => {
+        subscriptions.forEach(async (type) => {
             const params = {
                 'type': type,
                 'version': '1',
@@ -28,55 +28,53 @@ class Subscriptions {
                 params['condition']['to_broadcaster_user_id'] = user.id
                 delete params['condition']['broadcaster_user_id']
             }
-            this._SubscriptionModel.findOne({ userId: user.id, subscriptionType: type }).then(result => {
-                if (result === null) {
-                    axios.post('https://api.twitch.tv/helix/eventsub/subscriptions', params, {
-                        headers: {
-                            'Client-ID': this._CLIENT_ID,
-                            'Authorization': `Bearer ${this._APP_ACCESS_TOKEN}`,
-                            'Content-Type': 'application/json'
-                        }
-                    }).then(response => {
-                        this._SubscriptionModel.create({
-                            userId: user.id,
-                            subscriptionId: response.data.data[0].id,
-                            subscriptionType: response.data.data[0].type
-                        }).then(result => console.log('resultCreate: ', result))
-                            .catch(err => console.log('errCreate', err))
-                    }).catch(err => console.log('errAxiosPost: ', err))
-                }
-                else {
-                    console.log(`Subscription ${type} já cadastrada!`)
-                }
-            })
-        })
-    }
 
-    revokeSubscription = (subscription, user) => {
-        this._SubscriptionModel.findOne({ userId: user.id, subscriptionType: subscription.type }).then(result => {
-            if (result === null) {
-                console.log('Not found!')
-            }
-            else {
-                axios.delete(`https://api.twitch.tv/helix/eventsub/subscriptions?id=${result.subscriptionId}`, {
+            const subscription = await this._SubscriptionModel.findOne({ userId: user.id, subscriptionType: type })
+
+            if (subscription === null) {
+                const postResponse = await axios.post('https://api.twitch.tv/helix/eventsub/subscriptions', params, {
                     headers: {
                         'Client-ID': this._CLIENT_ID,
-                        'Authorization': `Bearer ${this._APP_ACCESS_TOKEN}`
+                        'Authorization': `Bearer ${this._APP_ACCESS_TOKEN}`,
+                        'Content-Type': 'application/json'
                     }
-                }).then(response => {
-                    this._SubscriptionModel.deleteOne({
-                        userId: user.id,
-                        subscriptionType: subscription.type
-                    }).then(response => console.log(response))
-                }).catch(err => console.log('errAxiosDelete: ', err))
+                })
+                console.log(`postResponse: ${postResponse}`)
+                const subscriptionCreated = await this._SubscriptionModel.create({
+                    userId: user.id,
+                    subscriptionId: postResponse.data.data[0].id,
+                    subscriptionType: postResponse.data.data[0].type
+                })
+                console.log(`subscriptionCreated: ${subscriptionCreated}`)
+            } else {
+                console.log(`Subscription ${type} já cadastrada!`)
             }
         })
     }
 
-    getSubscriptions = (user, callback) => {
-        this._SubscriptionModel.find({ userId: user.id }).then(result => {
-            callback(result)
-        })
+    revokeSubscription = async (subscription, user) => {
+        const subscriptionData = await this._SubscriptionModel.findOne({ userId: user.id, subscriptionType: subscription.type })
+
+        if (subscriptionData === null) {
+            console.log('Not found!')
+        } else {
+            const deleteResponse = await axios.delete(`https://api.twitch.tv/helix/eventsub/subscriptions?id=${subscriptionData.subscriptionId}`, {
+                headers: {
+                    'Client-ID': this._CLIENT_ID,
+                    'Authorization': `Bearer ${this._APP_ACCESS_TOKEN}`
+                }
+            })
+            console.log(`deleteResponse: ${deleteResponse}`)
+            const subscriptionDeleted = await this._SubscriptionModel.deleteOne({
+                userId: user.id,
+                subscriptionType: subscription.type
+            })
+            console.log(`subscriptionDeleted: ${subscriptionDeleted}`)
+        }
+    }
+
+    getSubscriptions = async (user) => {
+        return await this._SubscriptionModel.find({ userId: user.id })
     }
 
 }

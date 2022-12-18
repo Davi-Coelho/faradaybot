@@ -3,27 +3,24 @@ class FollowerDAO {
         this._FollowerModel = FollowerModel
     }
 
-    createFollow = (user) => {
-        this._FollowerModel.create({
+    createFollow = async (user) => {
+        const followerCreated = await this._FollowerModel.create({
             _id: user.id,
             channel: user.login,
             followers: []
-        }).then(result => console.log('createFollowResult: ', result))
-        .catch(err => console.log('createFollowErr: ', err))
+        })
+        console.log(`followerCreated: ${followerCreated}`)
     }
 
-    getFollower = (user, follow, callback) => {
-        this._FollowerModel.findOne({
+    getFollower = async (user, follow) => {
+        return await this._FollowerModel.findOne({
             _id: user.id,
             'followers._id': follow.user_id
-        }).then(result => {
-            callback(result)
         })
-        .catch(err => console.log('getFollowerErr: ', err))
     }
 
-    insertFollow = (user, follow) => {
-        this._FollowerModel.updateOne(
+    insertFollow = async (user, follow) => {
+        const followerUpdated = await this._FollowerModel.updateOne(
             {
                 _id: user.id
             },
@@ -37,12 +34,12 @@ class FollowerDAO {
                     }
                 }
             }
-            ).then(result => console.log('insertFollowResult: ', result))
-            .catch(err => console.log('insertFollowErr: ', err))
+        )
+        console.log(`followerCreated: ${followerUpdated}`)
     }
 
-    updateFollow = (user, follow) => {        
-        this._FollowerModel.updateOne(
+    updateFollow = async (user, follow) => {
+        const followerUpdated = await this._FollowerModel.updateOne(
             {
                 _id: user.id,
                 'followers._id': follow.user_id
@@ -52,8 +49,8 @@ class FollowerDAO {
                     'followers.$.followedAt': follow.followed_at
                 }
             }
-        ).then(result => console.log('updateFollowResult: ', result))
-        .catch(err => console.log('updateFollowErr: ', err))
+        )
+        console.log(`followerUpdated: ${followerUpdated}`)
     }
 }
 

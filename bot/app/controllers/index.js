@@ -10,7 +10,7 @@ module.exports.index = (application, req, res) => {
     }
 }
 
-module.exports.subscription = (application, req, res) => {
+module.exports.subscription = async (application, req, res) => {
 
     const user = req.session.passport.user.data[0]
     const Subscriptions = new application.app.models.Subscriptions(application.db.SubscriptionModel)
@@ -18,17 +18,18 @@ module.exports.subscription = (application, req, res) => {
     const FollowerDAO = new application.app.models.FollowerDAO(application.db.FollowerModel)
     const subTypes = ['channel.follow', 'channel.subscribe', 'channel.cheer', 'channel.raid']
 
-    UsuarioDAO.getUser(user, (result) => {
+    const userData = await UsuarioDAO.getUser(user)
+    console.log(userData)
 
-        if (result === null) {
-            FollowerDAO.createFollow(user)
-            Subscriptions.createSubscription(subTypes, user)
-        }
-    })
+    if (userData === null) {
+        await FollowerDAO.createFollow(user)
+        await Subscriptions.createSubscription(subTypes, user)
+    }
+
     res.redirect('/dashboard')
 }
 
-module.exports.subscriptionCallback = (application, req, res) => {
+module.exports.subscriptionCallback = async (application, req, res) => {
 
     switch (req.headers['twitch-eventsub-message-type']) {
         case 'webhook_callback_verification':
@@ -52,22 +53,21 @@ module.exports.subscriptionCallback = (application, req, res) => {
             switch (subscriptionType) {
                 case 'channel.follow':
                     const FollowerDAO = new application.app.models.FollowerDAO(application.db.FollowerModel)
-                    FollowerDAO.getFollower(user, event, result => {
+                    const userData = await FollowerDAO.getFollower(user, event)
                         
-                        if (result === null) {
-                            FollowerDAO.insertFollow(user, event)
-                            application.bot.say(application.bot.channels[index], `Obrigado pelo follow ${userEvent}!`)
-                        } else {
-                            const indexFollower = result.followers.findIndex(follower => follower._id === parseInt(event.user_id))
-                            
-                            if (result.followers[indexFollower].followedAt !== event.followed_at) {
-                                FollowerDAO.updateFollow(user, event)
-                            }
-                            else {
-                                console.log('Follow repetido!')
-                            }
+                    if (userData === null) {
+                        await FollowerDAO.insertFollow(user, event)
+                        application.bot.say(application.bot.channels[index], `Obrigado pelo follow ${userEvent}!`)
+                    } else {
+                        const indexFollower = userData.followers.findIndex(follower => follower._id === parseInt(event.user_id))
+
+                        if (userData.followers[indexFollower].followedAt !== event.followed_at) {
+                            await FollowerDAO.updateFollow(user, event)
                         }
-                    })
+                        else {
+                            console.log('Follow repetido!')
+                        }
+                    }
                     break
                 case 'channel.subscribe':
                     application.bot.say(application.bot.channels[index], `Muito obrigado pelo sub ${userEvent}!`)
