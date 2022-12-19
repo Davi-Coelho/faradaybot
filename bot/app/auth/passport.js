@@ -93,8 +93,7 @@ module.exports = (passport) => {
                 }
 
                 return done(null, profile)
-            }
-            else {
+            } else {
                 return done(null, false)
             }
         }

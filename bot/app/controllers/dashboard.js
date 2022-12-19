@@ -8,8 +8,7 @@ module.exports.dashboard = async (application, req, res) => {
 
         const userData = await UsuarioDAO.getUser(user)
         res.render('dashboard', { usuario: user, chatJoined: userData.chatJoined, botName: botName })
-    }
-    else {
+    } else {
         res.redirect('/')
     }
 }
@@ -42,8 +41,7 @@ module.exports.alertsPost = async (application, req, res) => {
     if (subscription.active) {
         await Subscriptions.createSubscription([subscription.type], user)
         res.status(201).send('created')
-    }
-    else {
+    } else {
         await Subscriptions.revokeSubscription(subscription, user)
         res.status(201).send('revoked')
     }

@@ -116,8 +116,7 @@ async function initDatabase() {
             password: ADMIN_PASSWORD
         })
         console.log(`adminCreated: ${adminCreated}`)
-    }
-    else {
+    } else {
         console.log('Conta de Administrador já existe!')
     }
 }

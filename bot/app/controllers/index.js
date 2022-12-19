@@ -4,8 +4,7 @@ module.exports.index = (application, req, res) => {
     
     if (req.isAuthenticated() && req.session.passport.user.userType === 'normal-user') {
         res.redirect('/dashboard')
-    }
-    else {
+    } else {
         res.render('index', { botName })
     }
 }
@@ -63,8 +62,7 @@ module.exports.subscriptionCallback = async (application, req, res) => {
 
                         if (userData.followers[indexFollower].followedAt !== event.followed_at) {
                             await FollowerDAO.updateFollow(user, event)
-                        }
-                        else {
+                        } else {
                             console.log('Follow repetido!')
                         }
                     }
