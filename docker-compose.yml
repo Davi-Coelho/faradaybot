@@ -17,32 +17,32 @@ services:
   bot:
     depends_on:
       - mongo
-    container_name: bot
+    container_name: $BOT_NAME
     restart: unless-stopped
     image: "${DOCKER_USER}/${BOT_NAME}"
     build: bot
     env_file:
       - .env
+    labels:
+      - traefik.http.routers.blog.rule=Host(`$BOT_NAME.your_domain`)
+      - traefik.http.routers.blog.tls=true
+      - traefik.http.routers.blog.tls.certresolver=lets-encrypt
+      - traefik.port=$BOT_PORT
     volumes:
       - ./bot:/home/node/app
       - node_modules:/home/node/app/node_modules
     networks:
       - app-network
+      - web
     command: /home/node/app/node_modules/.bin/nodemon app.js
-  nginx:
-    build: nginx
-    container_name: nginx
-    image: "${DOCKER_USER}/loadbalancer"
-    restart: unless-stopped
-    ports:
-      - "80:80"
-    networks:
-      - app-network
 
 volumes:
   db:
   node_modules:
 
 networks:
+  web:
+    external: true
   app-network:
     driver: bridge
+    external: false
