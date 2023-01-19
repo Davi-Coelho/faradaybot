@@ -24,9 +24,9 @@ services:
     env_file:
       - .env
     labels:
-      - traefik.http.routers.blog.rule=Host(`$BOT_NAME.davicoelho.com`)
-      - traefik.http.routers.blog.tls=true
-      - traefik.http.routers.blog.tls.certresolver=lets-encrypt
+      - traefik.http.routers.$BOT_NAME.rule=Host(`$BOT_NAME.davicoelho.com`)
+      - traefik.http.routers.$BOT_NAME.tls=true
+      - traefik.http.routers.$BOT_NAME.tls.certresolver=lets-encrypt
       - traefik.port=$BOT_PORT
     volumes:
       - ./bot:/home/node/app
